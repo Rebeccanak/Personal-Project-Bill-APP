@@ -4,22 +4,34 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import com.becky.beckybillapp.databinding.ActivityLoginBinding
-import com.becky.beckybillapp.databinding.ActivityRegisterBinding
+import com.becky.beckybillapp.ui.MainActivity
+import com.becky.beckybillapp.viewmodel.UserViewModel
+
 
 class LoginActivity : AppCompatActivity() {
+    val userViewModel : UserViewModel by viewModels ()
     lateinit var binding: ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding =ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.btnLogin.setOnClickListener {
-            val intent = Intent(this,MainActivity:: class.java)
+            val intent = Intent(this, HomePage:: class.java)
 
             startActivity(intent)
         }
         validateForm()
         clearErrors()
+
+        userViewModel.regLiveData.observe(this) { regResponse ->
+            Toast.makeText(this, regResponse.message, Toast.LENGTH_LONG).show()
+        }
+        userViewModel.errorLiveData.observe(this) { err ->
+            Toast.makeText(this, err, Toast.LENGTH_LONG).show()
+        }
     }
     fun validateForm(){
         val userName = binding.etUserName.text.toString()
@@ -61,6 +73,7 @@ class LoginActivity : AppCompatActivity() {
         binding.tilEmailAddress.error = null
         binding.tilPhone.error = null
         binding.tilPasswordHere.error = null
+
 
 
     }
